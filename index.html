@@ -1,5 +1,3 @@
-# be-my-valentine
-Valentine code
 # valentines_pydroid.py
 import http.server
 import socketserver
@@ -31,9 +29,38 @@ html_content = """
   /* Yes button */
   --yes: #e6002e;      /* bold red */
   --yesHover: #ff1744; /* brighter red on hover */
+
+  /* Rose petal accent */
+  --petalPink: #ff8fab;
+  --petalRed: #ff3b5c;
   
+  /* Falling rose petals */
+.petal {
+  position: fixed;
+  top: -10%;
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 30% 30%, #ff8fab, #ff3b5c);
+  border-radius: 60% 40% 60% 40%;
+  opacity: 0.85;
+  pointer-events: none;
+  animation-name: fall, sway;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite;
+  z-index: 0;
 }
 
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(360deg);
+  }
+}
+
+@keyframes sway {
+  0% { margin-left: 0; }
+  50% { margin-left: 40px; }
+  100% { margin-left: 0; }
+}
 
 /* Keep main content above petals */
 .card {
@@ -127,42 +154,6 @@ button {
 .result h2 { font-size: clamp(30px, 4.5vw, 46px); margin: 10px 0; }
 .fireworks { width: min(380px, 90vw); margin: 0 auto; display: block; }
 @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  /* 🌹 Falling rose petals – GitHub Pages safe */
-#petals {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 3; /* above background, below card */
-}
-
-.petal {
-  position: absolute;
-  top: -30px;
-  width: 18px;
-  height: 18px;
-  background: radial-gradient(circle at 30% 30%, #ff9bbf, #ff1744);
-  border-radius: 70% 30% 70% 30%;
-  opacity: 0.9;
-  animation: petalFall linear forwards;
-}
-
-@keyframes petalFall {
-  from {
-    transform: translateY(0) rotate(0deg);
-  }
-  to {
-    transform: translateY(120vh) rotate(360deg);
-  }
-}
-
-/* Keep card above petals */
-.card {
-  position: relative;
-  z-index: 5;
-}
 </style>
 </head>
 <body>
@@ -188,7 +179,7 @@ button {
   <path d="M190 144 C186 144 182 148 182 152 C182 160 190 164 190 170 C190 164 198 160 198 152 C198 148 194 144 190 144Z" fill="#ff7aa2"/>
 </svg>
 <h1>💖 
-  Erica will you be my Valentine? </h1>
+  Nancy will you be my Valentine? </h1>
 <section class="button-zone" id="zone">
   <button id="yesBtn">Yes</button>
   <button id="noBtn">No</button>
@@ -265,32 +256,24 @@ yesBtn.addEventListener("click", () => {
   result.style.display = "block";
   resizeConfettiCanvas();
   fullScreenConfetti();
-  // 🌹 Rose petals (mobile + GitHub Pages safe)
-window.addEventListener("load", () => {
-  const petalBox = document.getElementById("petals");
+  /* Create falling rose petals */
+function createPetal() {
+  const petal = document.createElement("div");
+  petal.className = "petal";
 
-  if (!petalBox) {
-    console.error("Petal container not found");
-    return;
-  }
+  petal.style.left = Math.random() * 100 + "vw";
+  petal.style.animationDuration =
+    6 + Math.random() * 6 + "s, " + (3 + Math.random() * 3) + "s";
+  petal.style.opacity = Math.random() * 0.5 + 0.4;
 
-  function spawnPetal() {
-    const petal = document.createElement("div");
-    petal.className = "petal";
+  document.body.appendChild(petal);
 
-    petal.style.left = Math.random() * 100 + "vw";
-    petal.style.animationDuration = (5 + Math.random() * 6) + "s";
+  setTimeout(() => petal.remove(), 12000);
+}
 
-    petalBox.appendChild(petal);
-
-    setTimeout(() => {
-      petal.remove();
-    }, 12000);
-  }
-
-  setInterval(spawnPetal, 300);
+/* Generate petals continuously */
+setInterval(createPetal, 400);
 });
-
 
 </script>
 </body>
